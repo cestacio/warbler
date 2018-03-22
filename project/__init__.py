@@ -49,6 +49,7 @@ def load_user(id):
 def root():
     followees = current_user.following.all()
     f_ids = [f.id for f in followees]
+    f_ids.append(current_user.id)
     messages = Message.query.filter(Message.user_id.in_(f_ids)).order_by("timestamp asc").limit(100).all()
     return render_template('home.html', messages=messages)
 
