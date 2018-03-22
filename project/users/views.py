@@ -1,6 +1,6 @@
 from flask import redirect, render_template, request, url_for, Blueprint, flash
 from project.users.models import User
-from project.users.forms import UserForm, LoginForm
+from project.users.forms import UserForm, LoginForm, EditForm
 from project import db
 from sqlalchemy.exc import IntegrityError
 from flask_login import login_user, logout_user, current_user, login_required
@@ -84,8 +84,10 @@ def logout():
 @login_required
 @ensure_correct_user
 def edit(id):
+    user = User.query.get(id)
+    form = EditForm(obj=user)
     return render_template(
-        'users/edit.html', form=UserForm(), user=User.query.get(id))
+        'users/edit.html', form=form, user=user)
 
 
 @users_blueprint.route(
@@ -121,12 +123,17 @@ def show(id):
             or current_user.get_id() != str(id)):
         return render_template('users/show.html', user=found_user)
     if request.method == b"PATCH":
-        form = UserForm(request.form)
+        form = EditForm(request.form)
         if form.validate():
             if User.authenticate(found_user.username, form.password.data):
                 found_user.username = form.username.data
                 found_user.email = form.email.data
+                found_user.first_name = form.first_name.data or None
+                found_user.last_name = form.last_name.data or None
+                found_user.bio = form.bio.data or None
+                found_user.location = form.location.data or None
                 found_user.image_url = form.image_url.data or None
+                found_user.header_image_url = form.header_image_url.data or None
                 db.session.add(found_user)
                 db.session.commit()
                 return redirect(url_for('users.show', id=id))

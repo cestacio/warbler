@@ -17,8 +17,11 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.Text, unique=True)
     username = db.Column(db.Text, unique=True)
+    first_name = db.Column(db.Text)
+    last_name = db.Column(db.Text)
     image_url = db.Column(db.Text)
-    header_image_url = db.Column(db.Text)
+    header_image_url = db.Column(
+        db.Text)
     bio = db.Column(db.Text)
     location = db.Column(db.Text)
     password = db.Column(db.Text)
@@ -34,11 +37,9 @@ class User(db.Model, UserMixin):
     def __init__(self,
                  email,
                  username,
-                 password,
-                 image_url='/static/images/default-pic.png'):
+                 password):
         self.email = email
         self.username = username
-        self.image_url = image_url
         self.password = bcrypt.generate_password_hash(password).decode('UTF-8')
 
     def __repr__(self):
