@@ -1,6 +1,7 @@
 from project import db, bcrypt
 from flask_login import UserMixin
 from project.messages.models import Message
+from sqlalchemy import UniqueConstraint
 
 FollowersFollowee = db.Table(
     'follows', db.Column('id', db.Integer, primary_key=True),
@@ -15,7 +16,9 @@ UserLikes = db.Table(
     db.Column('user_id', db.Integer, 
               db.ForeignKey('users.id', ondelete="cascade")), 
     db.Column('message_id', db.Integer, 
-              db.ForeignKey('messages.id', ondelete="cascade")))
+              db.ForeignKey('messages.id', ondelete="cascade")),
+    UniqueConstraint('user_id', 'message_id'))
+
 
 class User(db.Model, UserMixin):
 
@@ -67,6 +70,9 @@ class User(db.Model, UserMixin):
     def does_like(self, message):
         return bool(self.liked_messages.filter_by(id=message.id).first())
 
+    def show_follow(self, user):
+        return bool(self.id != user.id)
+
     @classmethod
     def authenticate(cls, username, password):
         found_user = cls.query.filter_by(username=username).first()
@@ -76,3 +82,5 @@ class User(db.Model, UserMixin):
             if is_authenticated:
                 return found_user
         return False
+    
+    

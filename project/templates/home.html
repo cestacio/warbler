@@ -10,7 +10,7 @@
                   {% if current_user.image_url == None %}
                   <img class="card-image" src="/static/images/default-profile.jpg" alt="Image for {{ current_user.username }}">
                   {% else %}
-                  <img class="card-image" src="{{ user.image_url }}" alt="Image for {{ current_user.username }}"> {% endif %}
+                  <img class="card-image" src="{{ current_user.image_url }}" alt="Image for {{ current_user.username }}"> {% endif %}
                   <p>@{{ current_user.username }}</p>
                 </a>
                 <ul class="user-stats nav nav-pills">

@@ -1,5 +1,6 @@
 from flask import redirect, render_template, request, url_for, Blueprint, flash
 from project.users.models import User
+from project.messages.models import Message
 from project.users.forms import UserForm, LoginForm, EditForm
 from project import db
 from sqlalchemy.exc import IntegrityError
@@ -17,7 +18,6 @@ def ensure_correct_user(fn):
             flash({'text': "Not Authorized", 'status': 'danger'})
             return redirect(url_for('root'))
         return fn(*args, **kwargs)
-
     return wrapper
 
 
@@ -29,9 +29,9 @@ def index():
         users = None
         if validate_csrf(token) == None:
             if search is None or search == '':
-                users = User.query.all()
+                users = User.query.order_by(User.username).all()
             else:
-                users = User.query.filter(User.username.like("%%%s%%" % search)).all()
+                users = User.query.filter(User.username.like("%%%s%%" % search)).order_by(User.username).all()
             return render_template('users/index.html', users=users)
         return render_template('404.html')
     return render_template('users/index.html', users=User.query.all())
@@ -150,7 +150,8 @@ def show(id):
             })
         return render_template('users/edit.html', form=form, user=found_user)
     if request.method == b"DELETE":
-        if form.validate():
+        token = request.form.get('csrf_token')
+        if validate_csrf(token) == None:
             db.session.delete(found_user)
             db.session.commit()
             return redirect(url_for('users.signup'))
