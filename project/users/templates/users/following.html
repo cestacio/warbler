@@ -12,12 +12,12 @@
                             <p>@{{ followee.username }}</p>
                         </a>
                         {% if current_user.is_following(followee) %}
-                        <form method="POST" action="{{url_for('users.follower', follower_id=followee.id)}}?_method=DELETE">
+                        <form method="POST" action="{{url_for('users.followee', followee_id=followee.id)}}?_method=DELETE">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <input type="submit" value="Unfollow" class="btn btn-primary btn-sm">
                         </form>
                         {% else %}
-                        <form method="POST" action="{{url_for('users.follower', follower_id=followee.id)}}">
+                        <form method="POST" action="{{url_for('users.followee', followee_id=followee.id)}}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <input type="submit" value="Follow" class="btn btn-outline-primary btn-sm">
                         </form>

@@ -36,7 +36,7 @@
                     </li>
                     <li class="stat">
                         <p class="small">Likes</p>
-                        <h4>TBD</h4>
+                        <h4><a href="{{ url_for('messages.likes', id=message.user_id) }}">{{ user.liked_messages.count() }}</a></h4>
                     </li>
                     <div class="ml-auto">
                         {% if current_user.id == user.id %}
@@ -46,12 +46,12 @@
                             <input type="submit" value="Delete Profile" class="btn btn-outline-danger ml-2">
                         </form>
                         {% elif current_user.is_authenticated %} {% if current_user.is_following(user) %}
-                        <form method="POST" action="{{url_for('users.follower', follower_id=user.id)}}?_method=DELETE">
+                        <form method="POST" action="{{url_for('users.followee', followee_id=user.id)}}?_method=DELETE">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <input type="submit" value="Unfollow" class="btn btn-primary">
                         </form>
                         {% else %}
-                        <form method="POST" action="{{url_for('users.follower', follower_id=user.id)}}">
+                        <form method="POST" action="{{url_for('users.followee', followee_id=user.id)}}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <input type="submit" value="Follow" class="btn btn-outline-primary">
                         </form>

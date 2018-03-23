@@ -64,8 +64,7 @@ def login():
     form = LoginForm()
     if request.method == "POST":
         if form.validate():
-            found_user = User.authenticate(form.username.data,
-                                           form.password.data)
+            found_user = User.authenticate(form.username.data, form.password.data)
             if found_user:
                 login_user(found_user)
                 flash({
@@ -97,18 +96,18 @@ def edit(id):
 
 
 @users_blueprint.route(
-    '/<int:follower_id>/follower', methods=['POST', 'DELETE'])
+    '/<int:followee_id>/followee', methods=['POST', 'DELETE'])
 @login_required
-def follower(follower_id):
+def followee(followee_id):
     token = request.form.get('csrf_token')
-    followed = User.query.get(follower_id)
+    followed = User.query.get(followee_id)
     if validate_csrf(token) == None:
         if request.method == 'POST':
             current_user.following.append(followed)
         else:
             current_user.following.remove(followed)
-            db.session.add(current_user)
-            db.session.commit()
+        db.session.add(current_user)
+        db.session.commit()
         return redirect(url_for('users.following', id=current_user.id))
     return render_template('404.html')
 

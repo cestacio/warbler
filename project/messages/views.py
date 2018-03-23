@@ -41,3 +41,19 @@ def show(id, message_id):
             return redirect(url_for('users.show', id=id))
         return render_template('404.html')
     return render_template('messages/show.html', message=found_message)
+
+@messages_blueprint.route(
+    '/<int:message_id>/message', methods=['POST', 'DELETE'])
+@login_required
+def like(id, message_id):
+    token = request.form.get('csrf_token')
+    message = Message.query.get(message_id)
+    if validate_csrf(token) == None:
+        if request.method == 'POST':
+            current_user.liked_messages.append(message)
+        else:
+            current_user.liked_messages.remove(message)
+        db.session.add(current_user)
+        db.session.commit()
+        return redirect(url_for('root'))
+    return render_template('404.html')

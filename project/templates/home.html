@@ -53,8 +53,18 @@
                     <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
                     <p>{{ message.text }}</p>
                 </div>
+                {% if current_user.does_like(message) %}
+                <form method="POST" action="{{url_for('messages.like', id=message.user_id, message_id=message.id)}}?_method=DELETE" class="ml-auto">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-link btn-lg"> <i class="fas fa-heart"></i></button>
+                </form>
+                {% else %}
+                <form method="POST" action="{{url_for('messages.like', id=message.user_id, message_id=message.id)}}" class="ml-auto">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-link btn-lg"> <i class="far fa-heart"></i></button>
+                </form>
+                {% endif %} {% endfor %}
             </li>
-            {% endfor %}
         </ul>
     </div>
 </div>
