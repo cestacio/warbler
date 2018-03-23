@@ -1,3 +1,6 @@
 {% extends 'base.html' %} {% block content %}
-<h3>Page doesn't exist! (404)</h3>
-<h4><a href="{{url_for('root')}}">Go back home.</a></h4>{% endblock %}
+<div id="error" class="col">
+    <h3>Page doesn't exist! (404)</h3>
+    <img src="static/images/404.gif" alt="">
+    <h4><a href="{{url_for('root')}}">Go back home.</a></h4>
+</div>{% endblock %}

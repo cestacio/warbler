@@ -5,6 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_migrate import Migrate
+from flask_wtf.csrf import CSRFProtect
 import os
 
 app = Flask(__name__)
@@ -28,6 +29,7 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+csrf = CSRFProtect(app)
 
 from project.users.views import users_blueprint
 from project.messages.views import messages_blueprint
@@ -47,11 +49,13 @@ def load_user(id):
 
 @app.route('/')
 def root():
-    followees = current_user.following.all()
-    f_ids = [f.id for f in followees]
-    f_ids.append(current_user.id)
-    messages = Message.query.filter(Message.user_id.in_(f_ids)).order_by("timestamp desc").limit(100)
-    return render_template('home.html', messages=messages)
+    if current_user.is_authenticated:
+        followees = current_user.following.all()
+        f_ids = [f.id for f in followees]
+        f_ids.append(current_user.id)
+        messages = Message.query.filter(Message.user_id.in_(f_ids)).order_by("timestamp desc").limit(100)
+        return render_template('home.html', messages=messages)
+    return render_template('home.html')
 
 
 @app.after_request

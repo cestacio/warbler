@@ -4,6 +4,7 @@ from project.users.views import ensure_correct_user
 from project.messages.forms import MessageForm
 from flask_login import current_user, login_required
 from project import db
+from flask_wtf.csrf import validate_csrf
 
 messages_blueprint = Blueprint(
     'messages', __name__, template_folder='templates')
@@ -32,8 +33,11 @@ def new(id):
 @messages_blueprint.route('/<int:message_id>', methods=["GET", "DELETE"])
 def show(id, message_id):
     found_message = Message.query.get(message_id)
+    token = request.form.get('csrf_token')
     if request.method == b"DELETE" and current_user.id == id:
-        db.session.delete(found_message)
-        db.session.commit()
-        return redirect(url_for('users.show', id=id))
+        if validate_csrf(token):
+            db.session.delete(found_message)
+            db.session.commit()
+            return redirect(url_for('users.show', id=id))
+        return render_template('404.html')
     return render_template('messages/show.html', message=found_message)

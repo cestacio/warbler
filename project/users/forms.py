@@ -21,7 +21,7 @@ class EditForm(FlaskForm):
     email = StringField('email', validators=[DataRequired(), Email()])
     first_name = StringField('first_name')
     last_name = StringField('last_name')
-    bio = StringField('bio', validators=[Length(max=200)], widget=TextArea())
+    bio = StringField('bio', validators=[Length(max=140)], widget=TextArea())
     location = StringField('location')
     image_url = StringField('image_url')
     header_image_url = StringField('header_image_url')

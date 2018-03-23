@@ -5,6 +5,7 @@ from project import db
 from sqlalchemy.exc import IntegrityError
 from flask_login import login_user, logout_user, current_user, login_required
 from functools import wraps
+from flask_wtf.csrf import validate_csrf
 
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
@@ -20,15 +21,20 @@ def ensure_correct_user(fn):
     return wrapper
 
 
-@users_blueprint.route('/', methods=["GET"])
+@users_blueprint.route('/', methods=["GET", "POST"])
 def index():
-    search = request.args.get('q')
-    users = None
-    if search is None or search == '':
-        users = User.query.all()
-    else:
-        users = User.query.filter(User.username.like("%%%s%%" % search)).all()
-    return render_template('users/index.html', users=users)
+    if request.method == "POST":
+        token = request.form.get('csrf_token')
+        search = request.form.get('q')
+        users = None
+        if validate_csrf(token) == None:
+            if search is None or search == '':
+                users = User.query.all()
+            else:
+                users = User.query.filter(User.username.like("%%%s%%" % search)).all()
+            return render_template('users/index.html', users=users)
+        return render_template('404.html')
+    return render_template('users/index.html', users=User.query.all())
 
 
 @users_blueprint.route('/signup', methods=["GET", "POST"])
@@ -94,15 +100,17 @@ def edit(id):
     '/<int:follower_id>/follower', methods=['POST', 'DELETE'])
 @login_required
 def follower(follower_id):
+    token = request.form.get('csrf_token')
     followed = User.query.get(follower_id)
-    if request.method == 'POST':
-        current_user.following.append(followed)
-    else:
-        current_user.following.remove(followed)
-    db.session.add(current_user)
-    db.session.commit()
-    return redirect(url_for('users.following', id=current_user.id))
-
+    if validate_csrf(token) == None:
+        if request.method == 'POST':
+            current_user.following.append(followed)
+        else:
+            current_user.following.remove(followed)
+            db.session.add(current_user)
+            db.session.commit()
+        return redirect(url_for('users.following', id=current_user.id))
+    return render_template('404.html')
 
 @users_blueprint.route('/<int:id>/following', methods=['GET'])
 @login_required
@@ -143,6 +151,7 @@ def show(id):
             })
         return render_template('users/edit.html', form=form, user=found_user)
     if request.method == b"DELETE":
-        db.session.delete(found_user)
-        db.session.commit()
-        return redirect(url_for('users.signup'))
+        if form.validate():
+            db.session.delete(found_user)
+            db.session.commit()
+            return redirect(url_for('users.signup'))

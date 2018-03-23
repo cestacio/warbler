@@ -42,7 +42,11 @@
             <li class="list-group-item">
                 <a href="{{ url_for('messages.show', id=message.user.id, message_id=message.id ) }}" class="message-link" />
                 <a href="{{ url_for('users.show', id=message.user.id) }}">
+                    {% if message.user.image_url != none %}
                     <img src="{{ message.user.image_url }}" alt="" class="timeline-image">
+                    {% else %}
+                    <img src="/static/images/default-profile.jpg" alt="" class="timeline-image">
+                    {% endif %}
                 </a>
                 <div class="message-area">
                     <a href="{{ url_for('users.show', id=message.user.id) }}">@{{ message.user.username }}</a>
