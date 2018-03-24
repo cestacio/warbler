@@ -5,7 +5,9 @@
         <div class="col-lg-4 col-md-6 col-12">
             <div class="card user-card">
                 <div class="card-inner">
-                    <img src="{{ url_for('static', filename='images/default-header.jpg') }}" alt="" class="card-hero">
+                    {% if followee.header_image_url %}
+                    <img src="{{ followee.header_image_url }}" alt="" class="card-hero"> {% else %}
+                    <img src="{{ url_for('static', filename='images/default-header.jpg') }}" alt="" class="card-hero"> {% endif %}
                     <div class="card-contents">
                         <a href="{{ url_for('users.show', id=followee.id) }}" class="card-link">
                             <img src="{{ followee.image_url }}" alt="Image for {{ followee.username }}" class="card-image">
