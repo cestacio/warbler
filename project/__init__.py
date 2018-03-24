@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_modus import Modus
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from flask_debugtoolbar import DebugToolbarExtension
+# from flask_debugtoolbar import DebugToolbarExtension
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 import os
@@ -21,8 +21,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or "it's a secret"
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-toolbar = DebugToolbarExtension(app)
+# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+# toolbar = DebugToolbarExtension(app)
 
 modus = Modus(app)
 bcrypt = Bcrypt(app)
