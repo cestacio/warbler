@@ -16,12 +16,12 @@
                         {% if current_user.show_follow(followee) %} {% if current_user.is_following(followee) %}
                         <form method="POST" action="{{url_for('users.followee', followee_id=followee.id)}}?_method=DELETE">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <input type="submit" value="Unfollow" class="btn btn-primary btn-sm">
+                            <input type="submit" value="Unfollow" class="btn btn-info btn-sm">
                         </form>
                         {% else %}
                         <form method="POST" action="{{url_for('users.followee', followee_id=followee.id)}}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <input type="submit" value="Follow" class="btn btn-outline-primary btn-sm">
+                            <input type="submit" value="Follow" class="btn btn-outline-info btn-sm">
                         </form>
                         {% endif %} {% endif %}
                     </div>

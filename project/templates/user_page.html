@@ -48,12 +48,12 @@
                         {% elif current_user.is_authenticated %} {% if current_user.is_following(user) %}
                         <form method="POST" action="{{url_for('users.followee', followee_id=user.id)}}?_method=DELETE">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <input type="submit" value="Unfollow" class="btn btn-primary">
+                            <input type="submit" value="Unfollow" class="btn btn-info">
                         </form>
                         {% else %}
                         <form method="POST" action="{{url_for('users.followee', followee_id=user.id)}}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <input type="submit" value="Follow" class="btn btn-outline-primary">
+                            <input type="submit" value="Follow" class="btn btn-outline-info">
                         </form>
                         {% endif %} {% endif %}
                     </div>
