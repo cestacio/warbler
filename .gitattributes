@@ -1,3 +1,2 @@
-generator/* linguist-vendored
-project/messages/templates/* linguist-vendored
+* linguist-vendored
 *.py linguist-vendored=false
